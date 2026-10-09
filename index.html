@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spotify – Web Player: Music for everyone</title>
+  <link rel="icon" type="image/x-icon" href="https://open.spotifycdn.com/cdn/images/favicon32.b64ecc03.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Font Awesome 6 Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Top Navigation Bar (Mobile / Responsive) & Desktop Header -->
+    <header class="top-header">
+      <div class="header-left">
+        <div class="nav-history-buttons">
+          <button class="circle-btn nav-btn" id="nav-back-btn" title="Go back">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button class="circle-btn nav-btn" id="nav-forward-btn" title="Go forward">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+        </div>
+        <div class="header-search-box hidden" id="header-search-box">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input type="text" id="search-input" placeholder="What do you want to play?" autocomplete="off" />
+          <button class="clear-search-btn hidden" id="clear-search-btn" title="Clear search">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+      
+      <div class="header-right">
+        <a href="#explore-premium" class="pill-badge premium-badge" id="premium-btn">Explore Premium</a>
+        <button class="pill-badge install-badge" id="install-btn">
+          <i class="fa-regular fa-circle-down"></i> Install App
+        </button>
+        <button class="icon-btn bell-btn" title="What's New">
+          <i class="fa-regular fa-bell"></i>
+        </button>
+        <div class="user-profile-menu" id="user-profile-btn" title="User Account">
+          <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Avatar" class="avatar-img" />
+          <span class="user-name">Sinchana</span>
+          <i class="fa-solid fa-chevron-down dropdown-arrow"></i>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Layout: Sidebar + Main Content -->
+    <div class="main-layout">
+      <!-- Left Sidebar Navigation & Library -->
+      <aside class="sidebar">
+        <!-- Top Nav Card -->
+        <nav class="nav-card">
+          <div class="spotify-logo-wrapper">
+            <a href="#" class="logo-link" id="logo-home-link">
+              <i class="fa-brands fa-spotify spotify-brand-icon"></i>
+              <span class="brand-name">Spotify</span>
+            </a>
+          </div>
+          <ul class="nav-links">
+            <li class="nav-item active" data-view="home" id="nav-home">
+              <a href="#home">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+              </a>
+            </li>
+            <li class="nav-item" data-view="search" id="nav-search">
+              <a href="#search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <span>Search</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Library Card -->
+        <div class="library-card">
+          <div class="library-header">
+            <button class="library-toggle-btn" title="Your Library">
+              <i class="fa-solid fa-book-bookmark"></i>
+              <span>Your Library</span>
+            </button>
+            <div class="library-actions">
+              <button class="icon-btn-round" id="create-playlist-btn" title="Create playlist or folder">
+                <i class="fa-solid fa-plus"></i>
+              </button>
+              <button class="icon-btn-round" id="library-more-btn" title="Enlarge your library">
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Library Filter Pills -->
+          <div class="library-pills">
+            <button class="filter-pill active" data-filter="all">Playlists</button>
+            <button class="filter-pill" data-filter="artists">Artists</button>
+            <button class="filter-pill" data-filter="podcasts">Albums</button>
+          </div>
+
+          <!-- Pinned & Dynamic Playlists List -->
+          <div class="library-list-container">
+            <div class="library-search-row">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="library-filter-input" placeholder="Search in Your Library" />
+              <button class="library-sort-btn" title="Sort by">
+                <span>Recents</span>
+                <i class="fa-solid fa-list-ul"></i>
+              </button>
+            </div>
+
+            <ul class="playlists-list" id="sidebar-playlists-list">
+              <!-- Liked Songs Row (Pinned) -->
+              <li class="playlist-row pinned active-playlist" data-id="liked" id="liked-songs-nav-item">
+                <div class="liked-icon-box">
+                  <i class="fa-solid fa-heart"></i>
+                </div>
+                <div class="playlist-info">
+                  <span class="playlist-title">Liked Songs</span>
+                  <span class="playlist-subtext"><i class="fa-solid fa-thumbtack pin-icon"></i> Playlist • <span id="liked-count">0</span> songs</span>
+                </div>
+                <div class="playing-indicator-icon hidden" id="liked-playing-indicator">
+                  <i class="fa-solid fa-volume-high"></i>
+                </div>
+              </li>
+              <!-- Dynamic user & curated playlists injected here -->
+            </ul>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Scrollable Content View -->
+      <main class="main-content" id="main-content-scroll">
+        <!-- Dynamic Views will be swapped here -->
+        
+        <!-- 1. HOME VIEW -->
+        <section class="view-panel active-view" id="home-view">
+          <!-- Top greeting & quick cards -->
+          <div class="home-hero-greeting">
+            <h1 id="greeting-text">Good afternoon</h1>
+            <div class="quick-recents-grid" id="quick-recents-grid">
+              <!-- 6 quick cards injected via JS -->
+            </div>
+          </div>
+
+          <!-- Made For You Section -->
+          <div class="content-shelf">
+            <div class="shelf-header">
+              <h2>Made For You</h2>
+              <a href="#show-all" class="show-all-link" data-shelf="made-for-you">Show all</a>
+            </div>
+            <div class="cards-carousel" id="made-for-you-shelf">
+              <!-- Cards rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Today's Top Hits Section -->
+          <div class="content-shelf">
+            <div class="shelf-header">
+              <h2>Today's Biggest Hits</h2>
+              <a href="#show-all" class="show-all-link" data-shelf="top-hits">Show all</a>
+            </div>
+            <div class="cards-carousel" id="top-hits-shelf">
+              <!-- Cards rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Focus & Chill Beats -->
+          <div class="content-shelf">
+            <div class="shelf-header">
+              <h2>Chill & Focus</h2>
+              <a href="#show-all" class="show-all-link" data-shelf="chill">Show all</a>
+            </div>
+            <div class="cards-carousel" id="chill-shelf">
+              <!-- Cards rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Popular Artists -->
+          <div class="content-shelf">
+            <div class="shelf-header">
+              <h2>Popular Artists</h2>
+              <a href="#show-all" class="show-all-link" data-shelf="artists">Show all</a>
+            </div>
+            <div class="cards-carousel round-avatars" id="artists-shelf">
+              <!-- Artist cards rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Footer in main content -->
+          <footer class="spotify-footer">
+            <div class="footer-columns">
+              <div class="footer-col">
+                <span class="col-title">Company</span>
+                <a href="#">About</a>
+                <a href="#">Jobs</a>
+                <a href="#">For the Record</a>
+              </div>
+              <div class="footer-col">
+                <span class="col-title">Communities</span>
+                <a href="#">For Artists</a>
+                <a href="#">Developers</a>
+                <a href="#">Advertising</a>
+                <a href="#">Investors</a>
+              </div>
+              <div class="footer-col">
+                <span class="col-title">Useful links</span>
+                <a href="#">Support</a>
+                <a href="#">Free Mobile App</a>
+              </div>
+              <div class="footer-col social-col">
+                <a href="#" class="social-circle" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="social-circle" title="Twitter"><i class="fa-brands fa-twitter"></i></a>
+                <a href="#" class="social-circle" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+              </div>
+            </div>
+            <div class="footer-bottom">
+              <p>&copy; 2026 Spotify AB Clone. Created with love for music lovers.</p>
+            </div>
+          </footer>
+        </section>
+
+        <!-- 2. SEARCH / EXPLORE VIEW -->
+        <section class="view-panel" id="search-view">
+          <div class="search-view-container">
+            <!-- Search Results Shelf (Visible when typing) -->
+            <div class="search-results-section hidden" id="search-results-section">
+              <div class="search-top-result-row">
+                <div class="top-result-container">
+                  <h2>Top result</h2>
+                  <div class="top-result-card" id="top-result-card">
+                    <!-- Injected via JS -->
+                  </div>
+                </div>
+                <div class="search-songs-list-container">
+                  <h2>Songs</h2>
+                  <div class="search-songs-list" id="search-songs-list">
+                    <!-- Song rows injected via JS -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Matching Playlists -->
+              <div class="content-shelf" id="search-playlists-shelf-container">
+                <div class="shelf-header">
+                  <h2>Featuring Matches</h2>
+                </div>
+                <div class="cards-carousel" id="search-playlists-shelf">
+                  <!-- Matching playlists -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Browse All Categories (Visible when search query is empty) -->
+            <div class="browse-categories-section" id="browse-categories-section">
+              <h2>Browse all</h2>
+              <div class="categories-grid" id="categories-grid">
+                <!-- Genre and vibe cards injected via JS -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. PLAYLIST / ALBUM DETAILS VIEW -->
+        <section class="view-panel" id="playlist-view">
+          <div class="playlist-header-hero" id="playlist-hero-banner">
+            <div class="playlist-cover-large-wrapper">
+              <img src="" alt="Playlist Cover" id="playlist-cover-img" class="playlist-cover-large" />
+              <div class="custom-cover-placeholder hidden" id="custom-cover-placeholder">
+                <i class="fa-solid fa-music"></i>
+              </div>
+            </div>
+            <div class="playlist-header-meta">
+              <span class="playlist-type-tag" id="playlist-type-tag">Public Playlist</span>
+              <h1 class="playlist-hero-title" id="playlist-hero-title">Playlist Title</h1>
+              <p class="playlist-hero-desc" id="playlist-hero-desc">Curated tracks description.</p>
+              <div class="playlist-hero-submeta">
+                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80" alt="Author" class="author-avatar" />
+                <span class="author-name" id="playlist-author-name">Spotify</span>
+                <span class="dot-separator">•</span>
+                <span class="track-count-text" id="playlist-track-count">10 songs</span>
+                <span class="dot-separator">•</span>
+                <span class="total-duration-text" id="playlist-total-duration">35 min 20 sec</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Playlist Actions Bar -->
+          <div class="playlist-action-bar">
+            <div class="left-actions">
+              <button class="big-green-play-btn" id="playlist-play-all-btn" title="Play">
+                <i class="fa-solid fa-play"></i>
+              </button>
+              <button class="icon-btn-secondary heart-playlist-btn" id="playlist-like-toggle-btn" title="Save to Your Library">
+                <i class="fa-regular fa-heart"></i>
+              </button>
+              <button class="icon-btn-secondary" id="playlist-download-btn" title="Download">
+                <i class="fa-regular fa-circle-down"></i>
+              </button>
+              <button class="icon-btn-secondary" id="playlist-more-options-btn" title="More options for playlist">
+                <i class="fa-solid fa-ellipsis"></i>
+              </button>
+            </div>
+            <div class="right-actions">
+              <div class="playlist-inline-search">
+                <button class="icon-btn-secondary search-toggle-btn" id="playlist-search-toggle" title="Search in playlist">
+                  <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+              </div>
+              <div class="sort-dropdown">
+                <span>Date added</span>
+                <i class="fa-solid fa-caret-down"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tracklist Table -->
+          <div class="tracklist-container">
+            <div class="tracklist-header-row">
+              <div class="th-col col-index">#</div>
+              <div class="th-col col-title">Title</div>
+              <div class="th-col col-album">Album</div>
+              <div class="th-col col-date">Date added</div>
+              <div class="th-col col-duration"><i class="fa-regular fa-clock"></i></div>
+            </div>
+            <div class="tracklist-body" id="playlist-tracklist-body">
+              <!-- Track rows injected dynamically via JS -->
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- Right Side Queue / Now Playing Panel (Collapsible) -->
+      <aside class="queue-sidebar hidden" id="queue-sidebar">
+        <div class="queue-header">
+          <h3>Queue</h3>
+          <button class="close-queue-btn" id="close-queue-btn" title="Close queue">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <div class="now-playing-queue-section">
+          <span class="queue-subhead">Now playing</span>
+          <div class="queue-item current" id="queue-current-track">
+            <!-- Currently playing track card -->
+          </div>
+        </div>
+        <div class="next-up-queue-section">
+          <span class="queue-subhead">Next in queue</span>
+          <div class="queue-list" id="queue-next-list">
+            <!-- Next songs in queue -->
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <!-- Fullscreen / Karaoke Animated Lyrics Modal -->
+    <div class="lyrics-overlay-modal hidden" id="lyrics-overlay-modal">
+      <div class="lyrics-header-bar">
+        <div class="lyrics-track-info">
+          <span class="lyrics-title" id="lyrics-track-title">Track Title</span>
+          <span class="lyrics-artist" id="lyrics-track-artist">Artist Name</span>
+        </div>
+        <button class="circle-btn close-lyrics-btn" id="close-lyrics-btn" title="Exit Lyrics">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="lyrics-content-container" id="lyrics-content-container">
+        <!-- Lines of lyrics dynamically highlighted -->
+      </div>
+    </div>
+
+    <!-- Create Playlist Modal -->
+    <div class="modal-overlay hidden" id="create-playlist-modal">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3>Create New Playlist</h3>
+          <button class="close-modal-btn" id="close-create-modal" title="Close">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <form id="create-playlist-form" class="modal-form">
+          <div class="form-group">
+            <label for="new-playlist-name">Playlist Name</label>
+            <input type="text" id="new-playlist-name" placeholder="My Awesome Playlist" required autocomplete="off" />
+          </div>
+          <div class="form-group">
+            <label for="new-playlist-desc">Description (optional)</label>
+            <textarea id="new-playlist-desc" placeholder="Give your playlist a catchy description" rows="3"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" id="cancel-create-playlist">Cancel</button>
+            <button type="submit" class="btn-primary">Create</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Toast Notification Popup -->
+    <div class="toast-notification hidden" id="toast-notification">
+      <i class="fa-solid fa-circle-check toast-icon"></i>
+      <span class="toast-message" id="toast-message">Added to your Liked Songs</span>
+    </div>
+
+    <!-- Bottom Persistent Playback Bar -->
+    <footer class="player-bar">
+      <!-- Left: Active Track Details -->
+      <div class="player-track-meta">
+        <div class="track-artwork-wrapper" id="player-artwork-wrapper">
+          <img src="https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?w=120&auto=format&fit=crop&q=80" alt="Cover" id="player-cover" class="player-cover-img" />
+          <div class="artwork-expand-btn" id="artwork-expand-btn" title="Expand view">
+            <i class="fa-solid fa-chevron-up"></i>
+          </div>
+        </div>
+        <div class="track-details-text">
+          <span class="track-name" id="player-title">Blinding Lights</span>
+          <span class="artist-name" id="player-artist">The Weeknd</span>
+        </div>
+        <button class="icon-btn-track like-btn" id="player-like-btn" title="Save to Your Library">
+          <i class="fa-regular fa-heart"></i>
+        </button>
+        <button class="icon-btn-track pip-btn" id="player-pip-btn" title="Picture in picture">
+          <i class="fa-regular fa-square-caret-right"></i>
+        </button>
+      </div>
+
+      <!-- Center: Playback Controls & Progress Bar -->
+      <div class="player-controls-container">
+        <div class="player-buttons-row">
+          <button class="control-btn" id="shuffle-btn" title="Enable shuffle">
+            <i class="fa-solid fa-shuffle"></i>
+          </button>
+          <button class="control-btn" id="prev-btn" title="Previous">
+            <i class="fa-solid fa-backward-step"></i>
+          </button>
+          <button class="control-btn play-pause-btn" id="play-pause-btn" title="Play">
+            <i class="fa-solid fa-play" id="play-pause-icon"></i>
+          </button>
+          <button class="control-btn" id="next-btn" title="Next">
+            <i class="fa-solid fa-forward-step"></i>
+          </button>
+          <button class="control-btn" id="repeat-btn" title="Enable repeat">
+            <i class="fa-solid fa-repeat"></i>
+          </button>
+        </div>
+
+        <div class="playback-timeline-bar">
+          <span class="time-stamp" id="current-time">0:00</span>
+          <div class="progress-bar-wrapper" id="progress-wrapper">
+            <div class="progress-bar-bg">
+              <div class="progress-bar-fill" id="progress-fill" style="width: 0%;">
+                <div class="progress-handle"></div>
+              </div>
+            </div>
+            <div class="progress-hover-tooltip" id="progress-tooltip">0:00</div>
+          </div>
+          <span class="time-stamp" id="total-time">3:20</span>
+        </div>
+      </div>
+
+      <!-- Right: Utility Controls (Lyrics, Queue, Volume, Fullscreen) -->
+      <div class="player-utilities">
+        <!-- Visualizer canvas mini -->
+        <canvas id="mini-audio-visualizer" width="50" height="20" title="Audio Visualizer" class="mini-viz"></canvas>
+
+        <button class="utility-btn" id="lyrics-btn" title="Lyrics">
+          <i class="fa-solid fa-microphone-lines"></i>
+        </button>
+        <button class="utility-btn" id="queue-btn" title="Queue">
+          <i class="fa-solid fa-list-ol"></i>
+        </button>
+        <button class="utility-btn" id="device-btn" title="Connect to a device">
+          <i class="fa-solid fa-computer"></i>
+        </button>
+
+        <div class="volume-control-box">
+          <button class="utility-btn" id="volume-icon-btn" title="Mute">
+            <i class="fa-solid fa-volume-high" id="volume-icon"></i>
+          </button>
+          <div class="volume-slider-wrapper" id="volume-wrapper">
+            <div class="volume-bar-bg">
+              <div class="volume-bar-fill" id="volume-fill" style="width: 80%;">
+                <div class="volume-handle"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="utility-btn" id="fullscreen-btn" title="Full screen">
+          <i class="fa-solid fa-up-right-and-down-left-from-center"></i>
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Audio Element (Managed by JavaScript) -->
+  <audio id="main-audio-element" preload="auto"></audio>
+
+  <!-- Scripts -->
+  <script src="js/songs.js"></script>
+  <script src="js/audio-player.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
